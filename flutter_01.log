@@ -1,0 +1,119 @@
+Flutter crash report.
+Please report a bug at https://github.com/flutter/flutter/issues.
+
+## command
+
+flutter run -d linux
+
+## exception
+
+ProcessException: ProcessException: No such file or directory
+  Command: google-chrome http://127.0.0.1:41389/pKflScQ8EuU=/devtools/?uri=ws://127.0.0.1:41389/pKflScQ8EuU=/ws
+
+```
+#0      _ProcessImpl._start (dart:io-patch/process_patch.dart:421:33)
+#1      Process.start (dart:io-patch/process_patch.dart:42:20)
+#2      Chrome._startProcess (package:browser_launcher/src/chrome.dart:177:26)
+#3      Chrome.start (package:browser_launcher/src/chrome.dart:170:13)
+#4      DartDevelopmentServiceLocalOperationsMixin.launchDevToolsInBrowser (package:flutter_tools/src/base/dds.dart:167:22)
+#5      TerminalHandler._commonTerminalInputHandler.<anonymous closure> (package:flutter_tools/src/resident_runner.dart:1808:46)
+#6      Iterable.fold (dart:core/iterable.dart:427:44)
+#7      TerminalHandler._commonTerminalInputHandler (package:flutter_tools/src/resident_runner.dart:1805:16)
+#8      TerminalHandler.processTerminalInput (package:flutter_tools/src/resident_runner.dart:1829:13)
+#9      _rootRunUnary (dart:async/zone.dart:1538:47)
+#10     _CustomZone.runUnary (dart:async/zone.dart:1429:19)
+#11     _CustomZone.runUnaryGuarded (dart:async/zone.dart:1329:7)
+#12     _BufferingStreamSubscription._sendData (dart:async/stream_impl.dart:381:11)
+#13     _BufferingStreamSubscription._add (dart:async/stream_impl.dart:312:7)
+#14     _SyncBroadcastStreamController._sendData (dart:async/broadcast_stream_controller.dart:385:25)
+#15     _BroadcastStreamController.add (dart:async/broadcast_stream_controller.dart:257:5)
+#16     _AsBroadcastStreamController.add (dart:async/broadcast_stream_controller.dart:488:11)
+#17     _rootRunUnary (dart:async/zone.dart:1538:47)
+#18     _CustomZone.runUnary (dart:async/zone.dart:1429:19)
+#19     _CustomZone.runUnaryGuarded (dart:async/zone.dart:1329:7)
+#20     _BufferingStreamSubscription._sendData (dart:async/stream_impl.dart:381:11)
+#21     _BufferingStreamSubscription._add (dart:async/stream_impl.dart:312:7)
+#22     _SinkTransformerStreamSubscription._add (dart:async/stream_transformers.dart:67:11)
+#23     _EventSinkWrapper.add (dart:async/stream_transformers.dart:13:11)
+#24     _StringAdapterSink.add (dart:convert/string_conversion.dart:228:11)
+#25     _StringAdapterSink.addSlice (dart:convert/string_conversion.dart:233:7)
+#26     _Utf8ConversionSink.addSlice (dart:convert/string_conversion.dart:313:20)
+#27     _ErrorHandlingAsciiDecoderSink.addSlice (dart:convert/ascii.dart:285:17)
+#28     _ErrorHandlingAsciiDecoderSink.add (dart:convert/ascii.dart:271:5)
+#29     _ConverterStreamEventSink.add (dart:convert/chunked_conversion.dart:70:18)
+#30     _SinkTransformerStreamSubscription._handleData (dart:async/stream_transformers.dart:115:24)
+#31     _rootRunUnary (dart:async/zone.dart:1538:47)
+#32     _CustomZone.runUnary (dart:async/zone.dart:1429:19)
+#33     _CustomZone.runUnaryGuarded (dart:async/zone.dart:1329:7)
+#34     _BufferingStreamSubscription._sendData (dart:async/stream_impl.dart:381:11)
+#35     _BufferingStreamSubscription._add (dart:async/stream_impl.dart:312:7)
+#36     _SyncStreamControllerDispatch._sendData (dart:async/stream_controller.dart:798:19)
+#37     _StreamController._add (dart:async/stream_controller.dart:663:7)
+#38     _StreamController.add (dart:async/stream_controller.dart:618:5)
+#39     _Socket._onData (dart:io-patch/socket_patch.dart:2880:41)
+#40     _rootRunUnary (dart:async/zone.dart:1546:13)
+#41     _CustomZone.runUnary (dart:async/zone.dart:1429:19)
+#42     _CustomZone.runUnaryGuarded (dart:async/zone.dart:1329:7)
+#43     _BufferingStreamSubscription._sendData (dart:async/stream_impl.dart:381:11)
+#44     _BufferingStreamSubscription._add (dart:async/stream_impl.dart:312:7)
+#45     _SyncStreamControllerDispatch._sendData (dart:async/stream_controller.dart:798:19)
+#46     _StreamController._add (dart:async/stream_controller.dart:663:7)
+#47     _StreamController.add (dart:async/stream_controller.dart:618:5)
+#48     new _RawSocket.<anonymous closure> (dart:io-patch/socket_patch.dart:2315:31)
+#49     _NativeSocket.issueReadEvent.issue (dart:io-patch/socket_patch.dart:1655:14)
+#50     _microtaskLoop (dart:async/schedule_microtask.dart:40:35)
+#51     _startMicrotaskLoop (dart:async/schedule_microtask.dart:49:5)
+#52     _runPendingImmediateCallback (dart:isolate-patch/isolate_patch.dart:127:13)
+#53     _RawReceivePort._handleMessage (dart:isolate-patch/isolate_patch.dart:194:5)
+```
+
+## flutter doctor
+
+```
+[32m[✓][39m Flutter (Channel stable, 3.38.7, on EndeavourOS 6.18.6-arch1-1, locale en_US.UTF-8) [66ms]
+    [32m•[39m Flutter version 3.38.7 on channel stable at /opt/flutter
+    [32m•[39m Upstream repository https://github.com/flutter/flutter.git
+    [32m•[39m Framework revision 3b62efc2a3 (2 weeks ago), 2026-01-13 13:47:42 -0800
+    [32m•[39m Engine revision 78fc3012e4
+    [32m•[39m Dart version 3.10.7
+    [32m•[39m DevTools version 2.51.1
+    [32m•[39m Feature flags: enable-web, enable-linux-desktop, enable-macos-desktop, enable-windows-desktop, enable-android,
+      enable-ios, cli-animations, enable-native-assets, omit-legacy-version-file, enable-lldb-debugging
+
+[33m[!][39m Android toolchain - develop for Android devices (Android SDK version 36.1.0) [555ms]
+    [32m•[39m Android SDK at /home/minh/Android/Sdk
+    [32m•[39m Emulator version 36.3.10.0 (build_id 14472402) (CL:N/A)
+    [31m✗[39m cmdline-tools component is missing.
+      Try installing or updating Android Studio.
+      Alternatively, download the tools from https://developer.android.com/studio#command-line-tools-only and make
+      sure to set the ANDROID_HOME environment variable.
+      See https://developer.android.com/studio/command-line for more details.
+    [31m✗[39m Android license status unknown.
+      Run `flutter doctor --android-licenses` to accept the SDK licenses.
+      See https://flutter.dev/to/linux-android-setup for more details.
+
+[31m[✗][39m Chrome - develop for the web (Cannot find Chrome executable at google-chrome) [11ms]
+    [33m![39m Cannot find Chrome. Try setting CHROME_EXECUTABLE to a Chrome executable.
+
+[32m[✓][39m Linux toolchain - develop for Linux desktop [464ms]
+    [32m•[39m clang version 21.1.6
+    [32m•[39m cmake version 4.2.2
+    [32m•[39m ninja version 1.13.2
+    [32m•[39m pkg-config version 2.5.1
+    [32m•[39m OpenGL core renderer: Mesa Intel(R) Graphics (ADL GT2)
+    [32m•[39m OpenGL core version: 4.6 (Core Profile) Mesa 25.3.4-arch1.1
+    [32m•[39m OpenGL core shading language version: 4.60
+    [32m•[39m OpenGL ES renderer: Mesa Intel(R) Graphics (ADL GT2)
+    [32m•[39m OpenGL ES version: OpenGL ES 3.2 Mesa 25.3.4-arch1.1
+    [32m•[39m OpenGL ES shading language version: OpenGL ES GLSL ES 3.20
+    [32m•[39m GL_EXT_framebuffer_blit: yes
+    [32m•[39m GL_EXT_texture_format_BGRA8888: yes
+
+[32m[✓][39m Connected device (1 available) [304ms]
+    [32m•[39m Linux (desktop) • linux • linux-x64 • EndeavourOS 6.18.6-arch1-1
+
+[32m[✓][39m Network resources [1,288ms]
+    [32m•[39m All expected network resources are available.
+
+[33m![39m Doctor found issues in 2 categories.
+```
