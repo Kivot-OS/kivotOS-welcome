@@ -27,3 +27,42 @@ doc/api/
 
 .flutter-plugins
 .flutter-plugins-dependencies
+# === Flutter/Dart ===
+.dart_tool/
+.packages
+.pub-cache/
+.flutter-plugins
+.flutter-plugins-dependencies
+build/
+
+# === Linux Desktop Specific ===
+linux/flutter/ephemeral/
+
+# === Arch Linux Packaging (dist/ folder) ===
+# Ignore the temporary build folders created by makepkg
+dist/src/
+dist/pkg/
+dist/src_bundle/
+# Ignore the generated PKGBUILD
+dist/PKGBUILD
+# Ignore the final compiled packages
+dist/*.pkg.tar.zst
+
+# === ISO Build Artifacts (mkarchiso) ===
+# Ignore the working directory and the final ISO output
+work/
+out/
+# Ignore the generated profile directory
+bal_iso_profile/
+
+# === IDEs and Editors ===
+.vscode/
+.idea/
+*.iml
+*.ipr
+*.iws
+.history/
+
+# === System Files ===
+.DS_Store
+Thumbs.db
