@@ -40,6 +40,27 @@ mkdir -p src/bundle
 echo "-> Copying binaries and libs to staging..."
 cp -r "../$BUILD_OUTPUT/"* src/bundle/
 
+# === FIX: RENAME BINARY HERE (Before PKGBUILD) ===
+# We standardize the binary name to 'bal_welcome' right now.
+cd src/bundle
+if [ -f "bal-welcome" ]; then
+    echo "-> Renaming bal-welcome to bal_welcome"
+    mv "bal-welcome" "bal_welcome"
+elif [ -f "welcome_app" ]; then
+    echo "-> Renaming welcome_app to bal_welcome"
+    mv "welcome_app" "bal_welcome"
+fi
+
+# Final check to ensure the binary exists before we proceed
+if [ ! -f "bal_welcome" ]; then
+    echo "❌ CRITICAL ERROR: Could not find binary file!"
+    echo "Files in staging:"
+    ls -l
+    exit 1
+fi
+cd ../..
+# =================================================
+
 echo "[3/4] Generating PKGBUILD..."
 cat <<EOF > PKGBUILD
 # Maintainer: minhmc2007 <quangminh21072010@gmail.com>
@@ -61,30 +82,21 @@ package() {
     install -d "\$install_dir"
     install -d "\$pkgdir/usr/bin"
 
-    # 1. Copy ALL files (binary, lib/, data/) preserving attributes
-    # The 'lib/' folder is crucial for Flutter apps!
+    # 1. Copy ALL files (which we already standardized in the bash script)
     cp -a "\$srcdir/bundle/"* "\$install_dir/"
 
-    # 2. Rename 'welcome_app' (default Flutter name) to 'bal_welcome'
-    if [ -f "\$install_dir/welcome_app" ]; then
-        mv "\$install_dir/welcome_app" "\$install_dir/bal_welcome"
-    fi
-
-    # 3. Create symlink
+    # 2. Create symlink
     ln -s "/opt/bal-welcome/bal_welcome" "\$pkgdir/usr/bin/bal-welcome"
 
-    # 4. Set permissions
+    # 3. Set permissions (The file IS guaranteed to be 'bal_welcome' now)
     chmod 755 "\$install_dir/bal_welcome"
 }
 EOF
 
 echo "[4/4] Building Arch Package..."
-# -e: Do not extract (we manually staged files)
-# -f: Overwrite existing package
 makepkg -ef
 
 echo "[5/5] Cleaning up intermediate files..."
-# Remove the source staging, the unzipped package folder, and the PKGBUILD
 rm -rf src/ pkg/ PKGBUILD src_bundle/
 
 echo "✅ Success! Final package located in dist/"
