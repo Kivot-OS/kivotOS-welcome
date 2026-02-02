@@ -85,6 +85,9 @@ class MainShell extends StatefulWidget {
 class _MainShellState extends State<MainShell> {
   late final Player _player;
   late final VideoController _controller;
+
+  // State management for view transitions
+  bool _isLoading = false;
   bool _showInfoScreen = false;
 
   @override
@@ -103,7 +106,15 @@ class _MainShellState extends State<MainShell> {
     super.dispose();
   }
 
-  Future<void> _applyRandomWallpaper() async {
+  /// 1. Picks random wallpaper
+  /// 2. Applies it visually via plasma (optional, for immediate feedback)
+  /// 3. Copies to ~/wallpaper/img.png
+  /// 4. Runs main.sh
+  Future<void> _processThemeAndWallpaper() async {
+    setState(() {
+      _isLoading = true;
+    });
+
     try {
       final dir = Directory('/usr/share/backgrounds');
       if (await dir.exists()) {
@@ -114,29 +125,81 @@ class _MainShellState extends State<MainShell> {
 
         if (files.isNotEmpty) {
           final randomFile = files[Random().nextInt(files.length)];
-          await Process.run('plasma-apply-wallpaperimage', [randomFile.path]);
+          final String selectedPath = randomFile.path;
+
+          debugPrint("Selected Wallpaper: $selectedPath");
+
+          // Optional: Immediate visual change using KDE tool if available
+          // We do this inside a try-catch so it doesn't crash if command missing
+          try {
+            await Process.run('plasma-apply-wallpaperimage', [selectedPath]);
+          } catch (_) {}
+
+          // Get Home Directory
+          final String? home = Platform.environment['HOME'];
+          if (home != null) {
+            final targetDir = Directory('$home/wallpaper');
+            if (!await targetDir.exists()) {
+              await targetDir.create(recursive: true);
+            }
+
+            // Copy file to ~/wallpaper/img.png
+            final File sourceFile = File(selectedPath);
+            final String targetPath = '$home/wallpaper/img.png';
+            await sourceFile.copy(targetPath);
+            debugPrint("Copied to: $targetPath");
+
+            // Execute main.sh inside ~/wallpaper/
+            // This is the heavy lifting (Material You generation + Shell restart)
+            debugPrint("Executing main.sh...");
+            final result = await Process.run(
+              'bash',
+              ['main.sh'],
+              workingDirectory: targetDir.path
+            );
+
+            if (result.exitCode != 0) {
+              debugPrint("Script Error: ${result.stderr}");
+            } else {
+              debugPrint("Script Output: ${result.stdout}");
+            }
+          }
         }
       }
     } catch (e) {
-      debugPrint("Wallpaper Error: $e");
+      debugPrint("Wallpaper/Theme Error: $e");
+    } finally {
+      // Small artificial delay if script was too fast, just to smooth animation
+      // or ensure UI has time to render the loading state at least briefly
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _showInfoScreen = true;
+        });
+      }
     }
-  }
-
-  void _switchView() {
-    _applyRandomWallpaper();
-    setState(() {
-      _showInfoScreen = true;
-    });
   }
 
   @override
   Widget build(BuildContext context) {
+    // Logic to determine which widget to show
+    Widget currentChild;
+    if (_isLoading) {
+      currentChild = LoadingView(key: const ValueKey('Loading'));
+    } else if (_showInfoScreen) {
+      currentChild = InfoView(key: const ValueKey('Info'), onExit: () => exit(0));
+    } else {
+      currentChild = WelcomeView(key: const ValueKey('Welcome'), onNext: _processThemeAndWallpaper);
+    }
+
     return Scaffold(
       body: Stack(
         children: [
+          // Background Video
           SizedBox.expand(
             child: Video(controller: _controller, fit: BoxFit.cover, controls: NoVideoControls),
           ),
+          // Frosted Glass Overlay Effect
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -151,20 +214,21 @@ class _MainShellState extends State<MainShell> {
               ),
             ),
           ),
+          // Content Switcher
           AnimatedSwitcher(
             duration: const Duration(milliseconds: 800),
             switchInCurve: Curves.easeInOutQuart,
               switchOutCurve: Curves.easeInOutQuart,
                 transitionBuilder: (Widget child, Animation<double> animation) {
+                  // Different transition for Loading screen vs others could be done here
+                  // For now, a slide-fade transition works well for all
                   final offsetAnimation = Tween<Offset>(
                     begin: const Offset(0.2, 0.0),
                     end: Offset.zero,
                   ).animate(animation);
                   return FadeTransition(opacity: animation, child: SlideTransition(position: offsetAnimation, child: child));
                 },
-                child: _showInfoScreen
-                ? InfoView(key: const ValueKey('Info'), onExit: () => exit(0))
-                : WelcomeView(key: const ValueKey('Welcome'), onNext: _switchView),
+                child: currentChild,
           ),
         ],
       ),
@@ -172,6 +236,86 @@ class _MainShellState extends State<MainShell> {
   }
 }
 
+// ==========================================
+// LOADING VIEW
+// ==========================================
+class LoadingView extends StatelessWidget {
+  const LoadingView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox.expand(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 100.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            FadeInDown(
+              child: SizedBox(
+                height: 60,
+                width: 60,
+                child: const CircularProgressIndicator(
+                  color: AppTheme.primaryBlue,
+                  strokeWidth: 5,
+                ),
+              ),
+            ),
+            const SizedBox(height: 30),
+            FadeInUp(
+              delay: const Duration(milliseconds: 200),
+              child: Text(
+                "CONNECTING...",
+                style: GoogleFonts.rubik(
+                  fontSize: 40,
+                  fontWeight: FontWeight.bold,
+                  color: AppTheme.darkText,
+                  letterSpacing: 2
+                )
+              ),
+            ),
+            const SizedBox(height: 10),
+            FadeInUp(
+              delay: const Duration(milliseconds: 400),
+              child: Text(
+                "Analyzing visual data & synchronizing theme protocols.",
+                style: GoogleFonts.sourceCodePro(
+                  fontSize: 16,
+                  color: Colors.grey[700],
+                  fontWeight: FontWeight.w500
+                )
+              ),
+            ),
+            const SizedBox(height: 10),
+            FadeInUp(
+              delay: const Duration(milliseconds: 600),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryBlue.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(color: AppTheme.primaryBlue.withOpacity(0.3))
+                ),
+                child: Text(
+                  "PLEASE WAIT ~ 3 SECONDS",
+                  style: GoogleFonts.rubik(
+                    fontSize: 12,
+                    color: AppTheme.primaryBlue,
+                    fontWeight: FontWeight.bold
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ==========================================
+// WELCOME VIEW
+// ==========================================
 class WelcomeView extends StatefulWidget {
   final VoidCallback onNext;
   const WelcomeView({super.key, required this.onNext});
@@ -204,12 +348,11 @@ class _WelcomeViewState extends State<WelcomeView> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Fixed container for the line to prevent layout shift during FadeIn
             SizedBox(
               width: 60,
               height: 6,
               child: FadeInLeft(
-                from: 50, // Explicit distance to ensure consistent start point
+                from: 50,
                 duration: const Duration(milliseconds: 800),
                 child: Container(color: AppTheme.primaryBlue)
               ),
@@ -217,11 +360,8 @@ class _WelcomeViewState extends State<WelcomeView> {
             const SizedBox(height: 30),
             SizedBox(
               height: 120,
-              // FIX START: Added alignment to AnimatedSwitcher
               child: AnimatedSwitcher(
                 duration: const Duration(milliseconds: 600),
-                // This layoutBuilder forces all children to align left in the stack,
-                // preventing the "center-to-left" jump when text width changes.
                 layoutBuilder: (Widget? currentChild, List<Widget> previousChildren) {
                   return Stack(
                     alignment: Alignment.centerLeft,
@@ -255,7 +395,6 @@ class _WelcomeViewState extends State<WelcomeView> {
                   )
                 ),
               ),
-              // FIX END
             ),
             const SizedBox(height: 10),
             FadeInUp(
@@ -276,6 +415,9 @@ class _WelcomeViewState extends State<WelcomeView> {
   }
 }
 
+// ==========================================
+// INFO VIEW
+// ==========================================
 class InfoView extends StatelessWidget {
   final VoidCallback onExit;
   const InfoView({super.key, required this.onExit});
@@ -293,7 +435,7 @@ class InfoView extends StatelessWidget {
               const SizedBox(height: 20),
               FadeInDown(from: 20, child: Text("System Initialization Complete", style: GoogleFonts.rubik(fontSize: 40, fontWeight: FontWeight.bold, color: AppTheme.darkText, height: 1.1))),
               const SizedBox(height: 10),
-              FadeInDown(delay: const Duration(milliseconds: 200), from: 20, child: Text("Thanks for using Blue Archive Linux.", style: GoogleFonts.rubik(fontSize: 22, color: Colors.grey[700], fontWeight: FontWeight.w300))),
+              FadeInDown(delay: const Duration(milliseconds: 200), from: 20, child: Text("Theme synchronized. Thanks for using Blue Archive Linux.", style: GoogleFonts.rubik(fontSize: 22, color: Colors.grey[700], fontWeight: FontWeight.w300))),
               const SizedBox(height: 50),
               FadeInRight(
                 delay: const Duration(milliseconds: 400),
@@ -323,6 +465,9 @@ class InfoView extends StatelessWidget {
   }
 }
 
+// ==========================================
+// BUTTON COMPONENT
+// ==========================================
 class SenseiButton extends StatefulWidget {
   final String text;
   final VoidCallback onPressed;
