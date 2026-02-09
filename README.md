@@ -8,7 +8,7 @@ It is designed to run during first boot or session startup, providing a polished
 
 ## Overview
 
-KivotOS Welcome delivers a cinematic startup experience inspired by *Blue Archive*, combining video backgrounds, smooth UI transitions, and system integration specific to Arch-based Blue Archive Linux.
+KivotOS Welcome delivers a cinematic startup experience inspired by *Blue Archive*, combining video backgrounds, smooth UI transitions, and system integration specific to Debian-based KivotOS.
 
 This application replaces traditional static greeters with a modern, animated interface while remaining lightweight and purpose-focused.
 
