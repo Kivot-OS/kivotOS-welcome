@@ -1,7 +1,7 @@
 
 # KivotOS Welcome
 
-**KivotOS Welcome** is a fullscreen animated welcome and initialization interface for **Blue Archive Linux (Arch-based)**, built with **Flutter Desktop**.
+**KivotOS Welcome** is a fullscreen animated welcome and initialization interface for **KivotOS (Debian-based)**, built with **Flutter Desktop**.
 It is designed to run during first boot or session startup, providing a polished transition into the KDE Plasma desktop.
 
 ---
@@ -69,7 +69,7 @@ bash dist/binary_build.sh
 The script will:
 
 * Compile the Flutter Linux desktop application
-* Produce a runnable binary suitable for Blue Archive Linux
+* Produce a runnable binary suitable for KivotOS
 
 ---
 
