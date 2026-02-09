@@ -1,20 +1,16 @@
 
-# BAL Welcome
+# KivotOS Welcome
 
-**BAL Welcome** is a fullscreen animated welcome and initialization interface for **Blue Archive Linux (Arch-based)**, built with **Flutter Desktop**.
+**KivotOS Welcome** is a fullscreen animated welcome and initialization interface for **Blue Archive Linux (Arch-based)**, built with **Flutter Desktop**.
 It is designed to run during first boot or session startup, providing a polished transition into the KDE Plasma desktop.
 
 ---
 
 ## Overview
 
-BAL Welcome delivers a cinematic startup experience inspired by *Blue Archive*, combining video backgrounds, smooth UI transitions, and system integration specific to Arch-based Blue Archive Linux.
+KivotOS Welcome delivers a cinematic startup experience inspired by *Blue Archive*, combining video backgrounds, smooth UI transitions, and system integration specific to Arch-based Blue Archive Linux.
 
 This application replaces traditional static greeters with a modern, animated interface while remaining lightweight and purpose-focused.
-
-> **Note**
-> Debian-based Blue Archive Linux is **end-of-life (EOL)**.
-> Ongoing support targets **Arch-based architecture only**.
 
 ---
 
@@ -48,7 +44,6 @@ This application replaces traditional static greeters with a modern, animated in
 
 ## System Requirements
 
-* Arch Linux or Arch-based distribution
 * KDE Plasma desktop environment
 * Flutter with Linux desktop enabled
 * Required system components:
@@ -65,7 +60,7 @@ This application replaces traditional static greeters with a modern, animated in
 
 ## Build Instructions
 
-BAL Welcome is built as a native Linux binary using the provided build script.
+KivotOS Welcome is built as a native Linux binary using the provided build script.
 
 ```bash
 bash dist/binary_build.sh
